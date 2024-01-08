@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const isFile = typeof value == "object";
 
     if (isFile) {
-      const blob = value as Blob;
+      const blob = value;
       const filename = blob.name;
 
       const existing = await fileExists(filename);
