@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/readable-stream": "^4.0.10",
     "antd": "^5.12.8",
     "axios": "^1.6.5",
     "firebase": "^10.7.1",
