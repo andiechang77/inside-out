@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Image from "next/image";
-import { Flex, Space } from "antd";
-import axios from "axios";
+import { PhotoData } from "./PhotoSection";
 
-const Photo = ({ data, index }) => {
+const Photo = ({ data, index }: { data: PhotoData; index: number }) => {
   return (
     <>
       <Image
