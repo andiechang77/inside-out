@@ -13,7 +13,7 @@ const Photo = ({ data, index }: { data: PhotoData; index: number }) => {
         alt={data.url}
         width={600}
         height={400}
-        className="m-5"
+        className="m-10"
       />
     </>
   );

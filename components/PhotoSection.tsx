@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Flex, Typography } from "antd";
+import { Divider, Flex, Typography } from "antd";
 import Photo from "@components/Photo";
 
 const { Title } = Typography;
@@ -17,7 +17,7 @@ const organizePhotosByCategory = (photos: PhotoData[]) => {
   const organizedPhotos: OrganizedPhotos = {};
 
   photos.forEach((photo) => {
-    const category = photo.category || "Uncategorized"; // Use 'Uncategorized' if no category is provided
+    const category = photo.category || "Uncategorized";
     if (!organizedPhotos[category]) {
       organizedPhotos[category] = [];
     }
@@ -32,8 +32,9 @@ export const PhotoSection = () => {
 
   const fetchData = async () => {
     try {
-      const data = await fetch("api/uploads");
+      const data = await fetch("/api/uploads");
       const json = await data.json();
+      console.log("json: ", json);
       const photos = json.map((item: any) => ({
         url: `/api/uploads/${item.filename}`,
         category: item.category || "unknown",
@@ -54,7 +55,7 @@ export const PhotoSection = () => {
     <div>
       {Object.entries(photosByCategory).map(([category, categoryPhotos]) => (
         <div key={category} className="ml-10">
-          <Title level={4} style={{ marginBottom: 0 }}>
+          <Title level={4} className="mb-0 ml-10">
             {category}
           </Title>
           <Flex wrap="wrap" justify="center">
@@ -62,6 +63,7 @@ export const PhotoSection = () => {
               <Photo data={photo} index={index} key={index} />
             ))}
           </Flex>
+          <Divider />
         </div>
       ))}
     </div>

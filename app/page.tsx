@@ -47,7 +47,7 @@ const Home = () => {
         </Button>
       </Header>
       <Content style={contentStyle}>
-        {/* <ImageUploader /> */}
+        <ImageUploader />
         <PhotoSection />
       </Content>
       <Footer style={footerStyle}></Footer>

@@ -1,6 +1,5 @@
 import { connectToDb } from "@utils/database";
 import { NextResponse } from "next/server";
-import { Stream } from "stream";
 
 type Params = {
   params: { filename: string };
@@ -20,7 +19,9 @@ export async function GET(req: Request) {
   const fileDataArray = await Promise.all(
     files.map(async (file) => {
       // 5. get each file data
-      const stream = bucket.openDownloadStreamByName(file.filename);
+      const stream = bucket.openDownloadStreamByName(
+        file.filename
+      ) as unknown as ReadableStream;
       const fileData = await streamToBuffer(stream); // You need a function to convert stream to buffer
 
       return {
@@ -40,7 +41,7 @@ export async function GET(req: Request) {
   });
 }
 
-async function streamToBuffer(stream: Stream): Promise<Buffer> {
+async function streamToBuffer(stream: ReadableStream): Promise<Buffer> {
   const chunks: Uint8Array[] = [];
   return new Promise((resolve, reject) => {
     stream.on("data", (chunk: Uint8Array) => chunks.push(chunk));
