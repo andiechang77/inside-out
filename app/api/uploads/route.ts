@@ -22,7 +22,7 @@ export async function GET(req: Request) {
       // 5. get each file data
       const stream = bucket.openDownloadStreamByName(
         file.filename
-      ) as unknown as ReadableStream;
+      ) as unknown as Stream;
       const fileData = await streamToBuffer(stream); // You need a function to convert stream to buffer
 
       return {
