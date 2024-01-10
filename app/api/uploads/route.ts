@@ -1,5 +1,6 @@
 import { connectToDb } from "@utils/database";
 import { NextResponse } from "next/server";
+import { Stream } from "stream";
 
 type Params = {
   params: { filename: string };
@@ -41,7 +42,7 @@ export async function GET(req: Request) {
   });
 }
 
-async function streamToBuffer(stream: ReadableStream): Promise<Buffer> {
+async function streamToBuffer(stream: Stream): Promise<Buffer> {
   const chunks: Uint8Array[] = [];
   return new Promise((resolve, reject) => {
     stream.on("data", (chunk: Uint8Array) => chunks.push(chunk));
