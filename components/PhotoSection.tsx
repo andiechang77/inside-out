@@ -32,16 +32,28 @@ export const PhotoSection = () => {
 
   const fetchData = async () => {
     try {
-      const data = await fetch("/api/uploads");
-      const json = await data.json();
-      console.log("json: ", json);
-      const photos = json.map((item: any) => ({
-        url: `/api/uploads/${item.filename}`,
-        category: item.category || "unknown",
-      }));
+      // Check if data is already cached
+      const cachedData = localStorage.getItem("cachedPhotos");
 
-      const organizedPhotos = organizePhotosByCategory(photos);
-      setPhotosByCategory(organizedPhotos);
+      if (cachedData) {
+        const parsedData = JSON.parse(cachedData);
+        setPhotosByCategory(parsedData);
+      } else {
+        // Fetch data from the server
+        const data = await fetch("/api/uploads");
+        const json = await data.json();
+
+        const photos = json.map((item: any) => ({
+          url: `/api/uploads/${item.filename}`,
+          category: item.category || "unknown",
+        }));
+
+        const organizedPhotos = organizePhotosByCategory(photos);
+        setPhotosByCategory(organizedPhotos);
+
+        // Cache the fetched data
+        localStorage.setItem("cachedPhotos", JSON.stringify(organizedPhotos));
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
