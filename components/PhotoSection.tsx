@@ -45,7 +45,7 @@ export const PhotoSection = () => {
 
         const photos = json.map((item: any) => ({
           url: `/api/uploads/${item.filename}`,
-          category: item.category || "unknown",
+          category: item.category,
         }));
 
         const organizedPhotos = organizePhotosByCategory(photos);

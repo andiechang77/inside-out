@@ -1,9 +1,13 @@
 import { connectToDb } from "@utils/database";
 import { NextResponse } from "next/server";
+import { Stream } from "stream";
+import { streamToBuffer } from "../route";
 
 type Params = {
   params: { filename: string };
 };
+
+const cache = new Map<string, Buffer>();
 
 export async function GET(req: Request, { params }: Params) {
   // 1. get GridFS bucket
@@ -15,24 +19,39 @@ export async function GET(req: Request, { params }: Params) {
     return new NextResponse(null, { status: 400, statusText: "Bad Request" });
   }
 
-  const files = await bucket.find({ filename }).toArray();
-  if (!files.length) {
-    return new NextResponse(null, { status: 404, statusText: "Not found" });
+  const cachedData = cache.get(filename);
+  if (cachedData) {
+    return new NextResponse(cachedData, {
+      headers: {
+        "Content-Type": "application/octet-stream", // Adjust the content type accordingly
+      },
+    });
   }
 
-  // 3. get file data
-  const file = files.at(0)!;
+  try {
+    const files = await bucket.find({ filename }).toArray();
 
-  // 4. get the file contents as stream
-  // Force the type to be ReadableStream since NextResponse doesn't accept GridFSBucketReadStream
-  const stream = bucket.openDownloadStreamByName(
-    filename
-  ) as unknown as ReadableStream;
+    if (files.length === 0) {
+      return new NextResponse(null, { status: 404, statusText: "Not found" });
+    }
 
-  // 5. return a streamed response
-  return new NextResponse(stream, {
-    headers: {
-      "Content-Type": file.contentType!,
-    },
-  });
+    const file = files[0];
+    const stream = bucket.openDownloadStreamByName(filename);
+
+    // Convert stream to buffer and store in the cache
+    const fileData = await streamToBuffer(stream);
+    cache.set(filename, fileData);
+
+    return new NextResponse(fileData, {
+      headers: {
+        "Content-Type": file.contentType!,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching file:", error);
+    return new NextResponse(null, {
+      status: 500,
+      statusText: "Internal Server Error",
+    });
+  }
 }

@@ -42,7 +42,7 @@ export async function GET(req: Request) {
   });
 }
 
-async function streamToBuffer(stream: Stream): Promise<Buffer> {
+export async function streamToBuffer(stream: Stream): Promise<Buffer> {
   const chunks: Uint8Array[] = [];
   return new Promise((resolve, reject) => {
     stream.on("data", (chunk: Uint8Array) => chunks.push(chunk));
