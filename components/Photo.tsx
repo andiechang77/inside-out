@@ -9,6 +9,7 @@ const Photo = ({ data, index }: { data: PhotoData; index: number }) => {
         src={data.url}
         key={index}
         alt={data.url}
+        blurDataURL={data.url}
         width={600}
         height={400}
         className="m-10"

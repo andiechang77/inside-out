@@ -1,8 +1,6 @@
 "use client";
 
-import axios from "axios";
-import React, { FormEvent, useRef, useState } from "react";
-import Image from "next/image";
+import React, { FormEvent, useRef } from "react";
 const ImageUploader = () => {
   // 1. add reference to input element
   const ref = useRef<HTMLInputElement>(null);
@@ -15,22 +13,43 @@ const ImageUploader = () => {
     const tagInput = tagInputRef.current!;
 
     // 3. build form data
-    const formData = new FormData();
     const files = Array.from(input.files ?? []);
-    formData.append("tags", tagInput.value);
+    // formData.append("tags", tagInput.value);
+
+    let uploaded: { [key: string]: string } = {};
+
+    // cloudinary api can only upload an image at a time
     for (const file of files) {
-      formData.append(file.name, file);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "inside-out");
+      const data = await fetch(
+        "https://api.cloudinary.com/v1_1/dvalvi2b7/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      ).then((r) => r.json());
+      uploaded[data.original_filename] = data.secure_url;
     }
 
-    // 4. use axios to send the FormData
-    await axios.post("/api/upload", formData);
-    // setUrls(files.map((file) => `/api/uploads/${file.name}`));
+    // 4. build another form data and send to mongodb
+    const formDataFromMongoDb = new FormData();
+    formDataFromMongoDb.append("tags", tagInput.value);
+    for (let key of Object.keys(uploaded)) {
+      let value = uploaded[key];
+      formDataFromMongoDb.append(key, value);
+    }
+    await fetch("api/upload", {
+      method: "POST",
+      body: formDataFromMongoDb,
+    });
   };
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form method="post" onSubmit={handleSubmit}>
         <input type="file" name="files" ref={ref} multiple />
-        <input type="text" placeholder="#Tag" ref={tagInputRef} required />
+        <input type="text" placeholder="#Tag" ref={tagInputRef} />
         <button
           type="submit"
           className="px-2 py-1 rounded-md bg-violet-50 text-violet-500"

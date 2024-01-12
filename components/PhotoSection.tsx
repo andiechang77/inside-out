@@ -6,7 +6,7 @@ const { Title } = Typography;
 
 export interface PhotoData {
   url: string;
-  category: string;
+  tags: string;
 }
 
 interface OrganizedPhotos {
@@ -17,7 +17,8 @@ const organizePhotosByCategory = (photos: PhotoData[]) => {
   const organizedPhotos: OrganizedPhotos = {};
 
   photos.forEach((photo) => {
-    const category = photo.category || "Uncategorized";
+    console.log("category: ", photo.tags);
+    const category = photo.tags || "Uncategorized";
     if (!organizedPhotos[category]) {
       organizedPhotos[category] = [];
     }
@@ -32,28 +33,11 @@ export const PhotoSection = () => {
 
   const fetchData = async () => {
     try {
-      // Check if data is already cached
-      const cachedData = localStorage.getItem("cachedPhotos");
-
-      if (cachedData) {
-        const parsedData = JSON.parse(cachedData);
-        setPhotosByCategory(parsedData);
-      } else {
-        // Fetch data from the server
-        const data = await fetch("/api/uploads");
-        const json = await data.json();
-
-        const photos = json.map((item: any) => ({
-          url: `/api/uploads/${item.filename}`,
-          category: item.category,
-        }));
-
-        const organizedPhotos = organizePhotosByCategory(photos);
-        setPhotosByCategory(organizedPhotos);
-
-        // Cache the fetched data
-        localStorage.setItem("cachedPhotos", JSON.stringify(organizedPhotos));
-      }
+      // Fetch data from the server
+      const data = await fetch("/api/uploads");
+      const json = await data.json();
+      const organizedPhotos = organizePhotosByCategory(json);
+      setPhotosByCategory(organizedPhotos);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
