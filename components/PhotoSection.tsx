@@ -33,7 +33,9 @@ export const PhotoSection = () => {
   const fetchData = async () => {
     try {
       // Fetch data from the server
-      const data = await fetch("/api/uploads");
+      const data = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/uploads`
+      );
       const json = await data.json();
       const organizedPhotos = organizePhotosByCategory(json);
       setPhotosByCategory(organizedPhotos);
