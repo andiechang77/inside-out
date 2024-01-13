@@ -17,7 +17,6 @@ const organizePhotosByCategory = (photos: PhotoData[]) => {
   const organizedPhotos: OrganizedPhotos = {};
 
   photos.forEach((photo) => {
-    console.log("category: ", photo.tags);
     const category = photo.tags || "Uncategorized";
     if (!organizedPhotos[category]) {
       organizedPhotos[category] = [];
