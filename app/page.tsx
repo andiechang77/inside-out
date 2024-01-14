@@ -6,6 +6,7 @@ import { Button, Layout } from "antd";
 const { Header, Footer, Content } = Layout;
 import ImageUploader from "@components/ImageUploader";
 import { PhotoSection } from "@components/PhotoSection";
+import { ScrollToTop } from "@components/ScrollToTopButton";
 
 const { Title } = Typography;
 
@@ -38,15 +39,14 @@ const Home = () => {
     <Layout style={layoutStyle}>
       <Header style={headerStyle}>
         <Link href="/">
-          <Title level={2} style={{ marginBottom: 0 }}>
-            inside out
-          </Title>
+          <Title level={2}>inside out</Title>
         </Link>
         <Button type="text" href="/about">
           About
         </Button>
       </Header>
       <Content style={contentStyle}>
+        <ScrollToTop />
         {/* <ImageUploader /> */}
         <PhotoSection />
       </Content>

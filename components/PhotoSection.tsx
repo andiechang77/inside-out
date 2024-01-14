@@ -48,19 +48,21 @@ export const PhotoSection = () => {
 
   return (
     <div>
-      {Object.entries(photosByCategory).map(([category, categoryPhotos]) => (
-        <div key={category} className="ml-10">
-          <Title level={4} className="mb-0 ml-10">
-            {category}
-          </Title>
-          <Flex wrap="wrap" justify="center">
-            {categoryPhotos.map((photo, index) => (
-              <Photo data={photo} index={index} key={index} />
-            ))}
-          </Flex>
-          <Divider />
-        </div>
-      ))}
+      {Object.entries(photosByCategory).map(
+        ([category, categoryPhotos], index) => (
+          <div key={category} className="p-10">
+            <Title level={4} className="mb-0 pl-12">
+              {category}
+            </Title>
+            <Flex wrap="wrap">
+              {categoryPhotos.map((photo, index) => (
+                <Photo data={photo} index={index} key={index} />
+              ))}
+            </Flex>
+            {index !== Object.keys(photosByCategory).length - 1 && <Divider />}
+          </div>
+        )
+      )}
     </div>
   );
 };
